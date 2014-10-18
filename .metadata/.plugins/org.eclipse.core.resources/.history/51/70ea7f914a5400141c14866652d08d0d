@@ -1,0 +1,100 @@
+package Chapter2.TCP_Sockets;
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
+
+
+public class TCPEchoClient 
+{
+	private static InetAddress host;
+	private static final int PORT = 4444;
+	
+	public static void main (String[] args)
+	{
+		
+		try
+		{
+			//host = InetAddress.getLocalHost();
+			
+			//this is a way to stipulate the address as a string - can also be a name .com
+			host = InetAddress.getByName("192.168.0.8");
+		}
+		catch (UnknownHostException uhEx)
+		{
+			System.out.println("Host ID not found!");
+			System.exit(1);
+		}
+		accessServer();		
+	}
+	
+	private static void accessServer()
+	{
+		Socket link = null;
+		try
+		{
+			//1. Establish a connection to the server.
+			// provide server IP and PORT number
+			
+			//getInputStream and getOutputStream = reference streams associated with socket returned above.
+			link = new Socket(host,PORT);
+			
+			
+			//2. setup input output to and from server.
+			//getInputStream and getOutputStream of class Socket are used to get references	to streams associated with the socket
+			//These streams	will be used for communication with the client that has just made connection
+			Scanner input = new Scanner(link.getInputStream());
+			PrintWriter output = new PrintWriter(link.getOutputStream(),true);
+			
+			
+			//Set up stream for keyboard entry...
+			Scanner userEntry = new Scanner(System.in);
+			String message;
+			String response;
+			
+			System.out.println("Connection established");
+			
+		
+			
+			do
+			{
+				
+				System.out.print("Enter Message: ");
+				message = userEntry.nextLine();
+				
+				output.println(message);
+				response = input.nextLine();
+				System.out.println("\nSERVER> " + response);
+							
+			}while (!message.equals("***CLOSE***"));
+			
+			
+			
+		}
+		catch(IOException ioEx)
+		{
+			ioEx.printStackTrace();
+		}
+		
+		//close the link always
+		finally
+		{
+			try
+			{
+				System.out.println("\n* Closing Connection... * ");
+				link.close();
+			}
+			catch(IOException ioEx)
+			{
+				System.out.println("Unable to disconnect!... terminating");
+				System.exit(1);
+			}
+		}
+		
+		
+	}
+	
+	
+	
+	
+}

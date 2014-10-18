@@ -1,0 +1,109 @@
+package Chapter2.UDP_Sockets;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+
+public class UDPEchoServer 
+{
+
+	private static final int PORT = 1234;
+	private static DatagramSocket datagramSocket;
+	private static DatagramPacket inPacket, outPacket;
+	private static byte[] buffer;
+	
+	public static void main (String[] args)
+	{
+		
+		System.out.println("Opening Port...\n");
+		try
+		{
+			//Open the necessary port - defined statically above
+			datagramSocket = new DatagramSocket(PORT);
+		}
+		catch (SocketException sockEx)
+			{
+				System.out.println("Unable to open port!");
+				//exit the program and don't go any further
+				System.exit(1);
+			}
+		
+		//Port opened Successfully
+		handleClient();
+		
+		
+	}
+	
+	
+	public static void handleClient()
+	{
+		System.out.println("Port opened Successfully");
+		try
+		{
+			//variables
+			String messageIn;  //message to be received and converted into bytes
+			String messageOut; //message to send already converted into bytes
+			int numMessages = 0;  //count of messages received
+			InetAddress clientAddress = null;
+			int clientPort;
+			
+			do
+			{
+				//Create a buffer for incoming datagrams.
+				buffer = new byte[256];
+				
+				//Create a DatagramPacket object for the incoming datagrams.
+				inPacket = new DatagramPacket(buffer, buffer.length);
+				
+				//Accept an incoming datagram - using the DatagramPacket object as the receptacle
+				datagramSocket.receive(inPacket);
+				
+				//now obtain incoming sender's address and port 
+				clientAddress = inPacket.getAddress();				
+				clientPort = inPacket.getPort();
+				
+				//data retrieved as a string, 
+				//parameters - a byte array, start position within that array, number of bytes
+				messageIn = new String(inPacket.getData(), 0, inPacket.getLength());
+				
+				
+				//at this point the message should be with the server
+				System.out.println("Message received.");
+				//increase the number of messages received
+				numMessages++;
+				
+				
+				messageOut = "Message " + numMessages + ": " + messageIn;
+				
+				//Create the response datagram. (change string into charset of bytes)
+				
+				//getBytes() - Encodes messageOut String into a sequence of bytes.
+				// (using the platform's default charset), thus storing the result into a new byte array. 
+				outPacket = new DatagramPacket(messageOut.getBytes(), messageOut.length(), clientAddress, clientPort);
+				
+				//Send the response datagram
+				datagramSocket.send(outPacket);
+				
+			}while(true);
+			
+		}
+		catch(IOException ioEx)
+		{
+			ioEx.printStackTrace();
+		}
+		finally //if exception thrown, close connection
+		{
+			System.out.println("\n* Closing connection... *");
+			
+			//close the server socket
+			datagramSocket.close();
+			
+		}
+		
+		
+	}
+	
+	
+}

@@ -1,0 +1,31 @@
+package Chapter2.UDP_Sockets;*;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+public class UDPEchoClient 
+{
+	private static InetAddress host;
+	private static final int PORT = 1234;
+	private static DatagramSocket datagramSocket;
+	private static DatagramPacket inPacket, outPacket;
+	private static byte[] buffer;
+	
+	public static void main(String[] args)
+	{
+		try
+		{
+			//get local host IP
+			host = InetAddress.getLocalHost();
+		}
+		catch (UnknownHostException uhEx)
+		 	{
+				System.out.println("Host ID not found!");
+				System.exit(1);
+			}
+	}
+	
+	
+}

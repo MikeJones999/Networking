@@ -1,0 +1,78 @@
+package Chapter2.UDP_Sockets;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+
+public class UDPEchoServer 
+{
+
+	private static final int PORT = 1234;
+	private static DatagramSocket datagramSocket;
+	private static DatagramPacket inPacket, outPacket;
+	private static byte[] buffer;
+	
+	public static void main (String[] args)
+	{
+		
+		System.out.println("Opening Port...\n");
+		try
+		{
+			//Open the necessary port - defined statically above
+			datagramSocket = new DatagramSocket(PORT);
+		}
+		catch (SocketException sockEx)
+			{
+				System.out.println("Unable to open port!");
+				//exit the program and don't go any further
+				System.exit(1);
+			}
+		
+		//Port opened Successfully
+		handleClient();
+		
+		
+	}
+	
+	
+	public static void handleClient()
+	{
+		
+		try
+		{
+			String messageIn;
+			String messageOut;
+			int numMessages = 0;
+			InetAddress clientAddress = null;
+			int clientPort;
+			
+			do
+			{
+				//Create a buffer for incoming datagrams.
+				buffer = new byte[256];
+				
+				//Create a DatagramPacket object for the incoming datagrams.
+				inPacket = new DatagramPacket(buffer, buffer.length);
+				
+				datagramSocket.receive(inPacket);
+				
+				clientAddress = inPacket.getAddress();
+				
+				clientPort = inPacket.getPort();
+				
+			}
+			
+		}
+		catch(IOException ioEx)
+		{
+			ioEx.printStackTrace();
+		}
+		
+		
+		
+	}
+	
+	
+}

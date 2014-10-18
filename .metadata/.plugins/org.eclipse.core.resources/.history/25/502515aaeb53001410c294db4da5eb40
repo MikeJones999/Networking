@@ -1,0 +1,116 @@
+package Chapter2;
+
+/**
+ *Server that echoes back client's messages.
+ *At end of dialogue, sends message indicating
+ *number of messages received. Uses TCP.
+ * @author mikieJ
+ *
+ */
+
+import java.io.*;
+import java.util.*;
+import java.net.*;
+
+
+public class TCPEchoServer 
+{
+	private static ServerSocket serverSocket;
+	private static final int PORT = 4444;
+	
+	
+	public static void main(String[] args)
+	{
+		
+		System.out.println("Opening port...\n");
+		
+		try
+		{
+			System.out.println("trying port: " + PORT);
+			//1. Create a ServerSocket object 
+			serverSocket = new ServerSocket(PORT); 
+			//serverSocket = new ServerSocket(PORT);
+		}
+		catch (IOException ioEx)
+		{
+			System.out.println("Unable to attach to port!");
+			System.exit(1);
+		}
+		
+		System.out.println("Port Successfully opened, Awaits Connection");
+		//public service running indefinitely
+		do
+		{
+			//call this method continuously while true
+			handleClient();			
+		}while (true);		
+		
+	}
+	
+	
+	private static void handleClient()
+	{
+		Socket link = null;
+		String connectedIP = "";
+		try
+		{
+			//2. Put the server into a waiting state.- client to join
+			//returns a Socket object when a connection is made
+			link = serverSocket.accept();
+			connectedIP = link.getLocalAddress().toString();
+			System.out.println(connectedIP + " has Connected");
+			//3. Set up input and output streams .
+			
+			//getInputStream and getOutputStream = reference streams associated with socket returned above.
+			Scanner input = new Scanner(link.getInputStream());
+			
+			
+			//Supplying the PrintWriter constructor with a second argument of true causes
+			//the output buffer to be flushed for every call of println (which is usually desirable).
+			PrintWriter output = new PrintWriter(link.getOutputStream(), true);
+			
+			
+			//4. Send and receive data.
+			//use method nextLine for receiving data and method	println for sending data,
+			int numMessages = 0;			
+			String message = input.nextLine();
+			
+			
+			while (!message.equals("***CLOSE***"))
+			{
+				System.out.println("Message Received");
+				numMessages++;
+				output.println("Message " + numMessages + ": " + message);
+				message = input.nextLine();
+				
+			}
+			
+			output.println(numMessages + " messages Received.");
+						
+		}
+		catch (IOException ioEx)
+		{
+			ioEx.printStackTrace();
+		}
+		finally
+		{
+			
+			try
+			{
+				//5. close the connection
+				System.out.println("\n* Closing Connection...*");
+				link.close();
+				System.out.println(connectedIP + " has disconnectd");
+			}
+			catch(IOException ioEx)
+			{
+				System.out.println(	"Unable to disconnect!");
+				System.exit(1);
+			}
+			
+		}
+	}
+	
+	
+	
+}

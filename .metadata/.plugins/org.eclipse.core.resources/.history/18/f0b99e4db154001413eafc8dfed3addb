@@ -1,0 +1,69 @@
+package Chapter2.GUIs;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.net.Socket;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+public class GetRemoteTime extends JFrame implements ActionListener
+{
+
+	//Variables - JFrame
+	private JTextField hostInput;
+	private JTextArea display;
+	private JButton timeButton;
+	private JButton exitButton;
+	private JPanel buttonPanel;
+	
+	//Variables - Sockets
+	private static Socket socket = null;
+	
+	public static void main(String[] args) 
+	{
+		GetRemoteTime frame = new GetRemoteTime();
+		//inherits jframe - thus setSize etc is used
+		frame.setSize(400,300);
+		frame.setVisible(true);
+		
+		frame.addWindowListener( new WindowAdapter()
+		{
+			public void WindowClosing(WindowEvent event)
+			{
+				//Check Whether a socket is open
+				if(socket !=null)
+				{
+					try
+					{
+						socket.close();
+					}
+					catch(IOException ioEx)
+					{
+						System.out.println(	"\nUnable to close link!\n");
+								System.exit(1);
+					}
+				}
+				System.exit(0);
+			}
+		}
+	  ); //new WindowAdapter()
+	}
+
+	
+	
+	
+	@Override
+	public void actionPerformed(ActionEvent arg0) 
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+}
