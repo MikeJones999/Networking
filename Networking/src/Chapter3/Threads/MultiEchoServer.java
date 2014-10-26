@@ -56,6 +56,10 @@ private static int connections;
 	{
 		connections = connections- 1;
 		System.out.println("Current users Connected: " + connections);
+		if (connections == 0)
+		{	
+			System.out.println("Waiting for client to connect...");
+		}
 	}
 	
 	public static int getConnectionNum()
@@ -65,65 +69,3 @@ private static int connections;
 	
 }
 
-/**
- * Class to handle client connects and communication with the main thread
- * @author MikieJ Study
- *
- */
-class ClientHandler implements Runnable
-{
-	private Socket client;
-	private Scanner input;
-	private PrintWriter output;
-	private MultiEchoServer connectionsHolder;
-	
-	
-	public ClientHandler(Socket socket)
-	{
-		this.client = socket;
-		try
-		{
-			input = new Scanner(client.getInputStream());
-			output = new PrintWriter(client.getOutputStream(), true);
-			connectionsHolder = new MultiEchoServer();
-		}
-		catch (IOException ioEx)
-		{
-			ioEx.printStackTrace();
-		}
-		
-	}
-	
-	
-	public void run()
-	{
-		
-		String received;
-		System.out.println("Thread active");
-		do
-		{	
-			//Accept message from client on the socket's input stream
-			received = input.nextLine();
-			
-			//Echo message back to client on the socket's output stream
-			output.println("ECHO: " + received);
-		}
-		while(!received.equals("Quit"));
-		
-		try
-		{
-			if (client != null)
-			{
-				System.out.println("Closing down Connection...");
-				client.close();
-				connectionsHolder.decreaseConnectionNum();
-				
-			}
-		}
-		catch(IOException ioEx)
-		{
-			System.out.println("Unable to disconnect");
-		}
-		
-	}
-}

@@ -46,14 +46,15 @@ public class MultiEchoClient
 			String response; //awaiting incoming message
 			//stream for keyboard enrty
 			Scanner userEntry = new Scanner(System.in);
+			System.out.print("Connected to Server as " + Thread.currentThread().getName() + "\n");
 			do
 			{
 				System.out.print("Enter message ('Quit' to exit): ");
 				message = userEntry.nextLine();
 				
 				
-				//send message via socket.
-				networkOutput.println("client: " + message);
+				//send message via socket. - this must only be a string - no front characters
+				networkOutput.println(message);
 				
 				//wait then get server response
 				response = networkInput.nextLine();
